@@ -16,9 +16,9 @@ const LoginScreen = () => {
     e.preventDefault();
     
     if (isLogin) {
-      const result = login(email, password, mockUsers);
-      if (result.success) {
-        navigate('/');
+      const resultado = login(email, password, mockUsers);
+      if (resultado.success) {
+        navigate('/dashboard');
       } else {
         alert('Credenciales inválidas');
       }

@@ -6,19 +6,19 @@ import MainMenu from '../components/MainMenu';
 import './DashboardScreen.css';
 
 const DashboardScreen = () => {
-  const { medicines } = useMed();
-  const { currentUser } = useAuth();
+  const { medicamentos } = useMed();
+  const { usuarioActual } = useAuth();
 
   // Filtrar medicamentos del día de hoy
-  const medicamentosHoy = medicines.filter(med => {
+  const medicamentosHoy = medicamentos.filter(medicamento => {
     // Esta lógica se puede expandir según necesidad
-    return med.activo !== false;
+    return medicamento.activo !== false;
   });
 
   // Ordenar por hora
-  const ordenados = [...medicamentosHoy].sort((a, b) => {
-    const horaA = parseInt(a.primeraToma.replace(':', ''));
-    const horaB = parseInt(b.primeraToma.replace(':', ''));
+  const ordenados = [...medicamentosHoy].sort((medicamentoA, medicamentoB) => {
+    const horaA = parseInt(medicamentoA.primeraToma.replace(':', ''));
+    const horaB = parseInt(medicamentoB.primeraToma.replace(':', ''));
     return horaA - horaB;
   });
 
@@ -26,7 +26,7 @@ const DashboardScreen = () => {
     <div className="dashboard-screen">
       <div className="dashboard-header">
         <div className="header-content">
-          <h1 className="greeting">¡Hola, {currentUser?.nombre || 'Usuario'}!</h1>
+          <h1 className="greeting">¡Hola, {usuarioActual?.nombre || 'Usuario'}!</h1>
           <p className="sub-greeting">Mantén tu tratamiento al día</p>
         </div>
         <div className="header-icon">👤</div>
@@ -42,10 +42,10 @@ const DashboardScreen = () => {
           </div>
         ) : (
           <div className="medicamentos-list">
-            {ordenados.map(med => (
+            {ordenados.map(medicamento => (
               <MedicamentoCard 
-                key={med.id} 
-                medicamento={med} 
+                key={medicamento.id} 
+                medicamento={medicamento} 
                 tipoVista="dashboard"
               />
             ))}

@@ -3,15 +3,15 @@ import { useMed } from '../context/MedContext';
 import './MedicamentoCard.css';
 
 const MedicamentoCard = ({ medicamento, tipoVista = 'dashboard' }) => {
-  const { marcarToma } = useMed();
+  const { marcarToma: marcarTomaContext } = useMed();
 
   // Calcular porcentaje de stock
-  const stockPorcentaje = (medicamento.stockActual / medicamento.stockInicial) * 100;
+  const porcentajeStock = (medicamento.stockActual / medicamento.stockInicial) * 100;
 
   // Función para calcular el color de la barra según la hora
-  const getBarraColor = (tomaNumero) => {
-    const ahora = new Date();
-    const horaActual = ahora.getHours() * 60 + ahora.getMinutes();
+  const obtenerColorBarra = (tomaNumero) => {
+    const fechaActual = new Date();
+    const horaActual = fechaActual.getHours() * 60 + fechaActual.getMinutes();
     
     // Calcular la hora de la toma
     const [hora, minuto] = medicamento.primeraToma.split(':');
@@ -21,12 +21,12 @@ const MedicamentoCard = ({ medicamento, tipoVista = 'dashboard' }) => {
     const diferencia = horaActual - horaToma;
     
     // Verificar si ya fue tomada
-    const hoy = new Date().toISOString().split('T')[0];
-    const tomarRealizada = medicamento.tomasRealizadas.find(
-      t => t.fecha === hoy && t.hora === medicamento.primeraToma
+    const fechaHoy = new Date().toISOString().split('T')[0];
+    const tomaRealizada = medicamento.tomasRealizadas.find(
+      toma => toma.fecha === fechaHoy && toma.hora === medicamento.primeraToma
     );
     
-    if (tomarRealizada && tomarRealizada.tomada) {
+    if (tomaRealizada && tomaRealizada.tomada) {
       return '#4CAF50'; // Verde - ya tomada
     }
     
@@ -41,12 +41,16 @@ const MedicamentoCard = ({ medicamento, tipoVista = 'dashboard' }) => {
     }
   };
 
-  const handleMarcarToma = () => {
-    marcarToma(medicamento.id, medicamento.primeraToma);
+  /**
+   * Maneja el evento de marcar una toma como realizada
+   * Registra la toma en el historial y actualiza el stock del medicamento
+   */
+  const marcarToma = () => {
+    marcarTomaContext(medicamento.id, medicamento.primeraToma);
   };
 
   // Obtener ícono según presentación
-  const getIcono = () => {
+  const obtenerIcono = () => {
     if (medicamento.presentacion === 'inyeccion') {
       return '💉';
     }
@@ -58,7 +62,7 @@ const MedicamentoCard = ({ medicamento, tipoVista = 'dashboard' }) => {
       <div 
         className="card-background"
         style={{
-          background: `linear-gradient(135deg, ${medicamento.color} ${stockPorcentaje}%, transparent ${stockPorcentaje}%)`
+          background: `linear-gradient(135deg, ${medicamento.color} ${porcentajeStock}%, transparent ${porcentajeStock}%)`
         }}
       >
         <div className="card-content">
@@ -67,7 +71,7 @@ const MedicamentoCard = ({ medicamento, tipoVista = 'dashboard' }) => {
               className="med-icon"
               style={{ backgroundColor: medicamento.color }}
             >
-              {getIcono()}
+              {obtenerIcono()}
             </div>
             <div className="med-info">
               <h3 className="med-nombre">{medicamento.nombre}</h3>
@@ -87,7 +91,7 @@ const MedicamentoCard = ({ medicamento, tipoVista = 'dashboard' }) => {
                 <div 
                   className="toma-barra"
                   style={{ 
-                    backgroundColor: getBarraColor(index + 1),
+                    backgroundColor: obtenerColorBarra(index + 1),
                     width: '100%',
                     height: '8px',
                     borderRadius: '4px',
@@ -102,7 +106,7 @@ const MedicamentoCard = ({ medicamento, tipoVista = 'dashboard' }) => {
             <>
               <button 
                 className="btn-marcar"
-                onClick={handleMarcarToma}
+                onClick={manejarMarcarTomaRealizada}
                 style={{ backgroundColor: medicamento.color }}
               >
                 ✓ Marcar como tomado

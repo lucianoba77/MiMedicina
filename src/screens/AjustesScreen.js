@@ -6,10 +6,10 @@ import './AjustesScreen.css';
 
 const AjustesScreen = () => {
   const navigate = useNavigate();
-  const { currentUser } = useAuth();
+  const { usuarioActual } = useAuth();
   const [formData, setFormData] = useState({
-    nombre: currentUser?.nombre || 'lucianoba77',
-    email: currentUser?.email || 'lucianoba77@hotmail.com',
+    nombre: usuarioActual?.nombre || 'lucianoba77',
+    email: usuarioActual?.email || 'lucianoba77@hotmail.com',
     notificacionesActivas: true,
     tonoAlarma: 'por-defecto',
     repeticionesAlarma: 3,
@@ -27,7 +27,7 @@ const AjustesScreen = () => {
   return (
     <div className="ajustes-screen">
       <div className="ajustes-header">
-        <button className="btn-home" onClick={() => navigate('/')}>🏠</button>
+        <button className="btn-home" onClick={() => navigate('/dashboard')}>🏠</button>
         <h1>Ajustes</h1>
       </div>
 

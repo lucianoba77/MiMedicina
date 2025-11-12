@@ -6,16 +6,16 @@ import './HistorialScreen.css';
 
 const HistorialScreen = () => {
   const navigate = useNavigate();
-  const { medicines } = useMed();
+  const { medicamentos } = useMed();
 
-  const totalMedicamentos = medicines.length;
-  const activos = medicines.filter(m => m.activo !== false).length;
-  const completados = medicines.filter(m => m.stockActual === 0 || m.activo === false).length;
+  const totalMedicamentos = medicamentos.length;
+  const activos = medicamentos.filter(medicamento => medicamento.activo !== false).length;
+  const completados = medicamentos.filter(medicamento => medicamento.stockActual === 0 || medicamento.activo === false).length;
 
   return (
     <div className="historial-screen">
       <div className="historial-header">
-        <button className="btn-home" onClick={() => navigate('/')}>🏠</button>
+        <button className="btn-home" onClick={() => navigate('/dashboard')}>🏠</button>
         <h1>Historial</h1>
       </div>
 
@@ -53,17 +53,17 @@ const HistorialScreen = () => {
           </div>
           
           <div className="adherencia-list">
-            {medicines.map(med => (
-              <div key={med.id} className="adherencia-item">
-                <span className="adherencia-nombre">{med.nombre}</span>
+            {medicamentos.map(medicamento => (
+              <div key={medicamento.id} className="adherencia-item">
+                <span className="adherencia-nombre">{medicamento.nombre}</span>
                 <span className="adherencia-porcentaje">
-                  {med.tomasRealizadas.length > 0 ? '10%' : '0%'}
+                  {medicamento.tomasRealizadas.length > 0 ? '10%' : '0%'}
                 </span>
                 <div className="adherencia-bar-container">
                   <div 
                     className="adherencia-bar"
                     style={{ 
-                      width: med.tomasRealizadas.length > 0 ? '10%' : '0%' 
+                      width: medicamento.tomasRealizadas.length > 0 ? '10%' : '0%' 
                     }}
                   />
                 </div>

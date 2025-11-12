@@ -6,14 +6,18 @@ export const mockUsers = [
     email: 'lucianoba77@hotmail.com',
     password: 'lucianoba77',
     nombre: 'lucianoba77',
-    role: 'paciente'
+    role: 'paciente',
+    tipoSuscripcion: 'gratis',
+    esPremium: false
   },
   {
     id: '2',
-    email: 'asistente@gmail.com',
+    email: 'asistente@email.com',
     password: 'asistente123',
     nombre: 'Asistente',
-    role: 'asistente'
+    role: 'asistente',
+    tipoSuscripcion: 'premium',
+    esPremium: true
   }
 ];
 

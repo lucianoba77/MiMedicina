@@ -3,23 +3,23 @@ import React, { createContext, useState, useContext } from 'react';
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
-  const [currentUser, setCurrentUser] = useState(null);
+  const [usuarioActual, setUsuarioActual] = useState(null);
 
-  const login = (email, password, users) => {
-    const user = users.find(u => u.email === email && u.password === password);
-    if (user) {
-      setCurrentUser(user);
-      return { success: true, user };
+  const login = (email, password, usuarios) => {
+    const usuarioEncontrado = usuarios.find(usuario => usuario.email === email && usuario.password === password);
+    if (usuarioEncontrado) {
+      setUsuarioActual(usuarioEncontrado);
+      return { success: true, usuario: usuarioEncontrado };
     }
     return { success: false, error: 'Credenciales inválidas' };
   };
 
   const logout = () => {
-    setCurrentUser(null);
+    setUsuarioActual(null);
   };
 
   return (
-    <AuthContext.Provider value={{ currentUser, login, logout }}>
+    <AuthContext.Provider value={{ usuarioActual, login, logout }}>
       {children}
     </AuthContext.Provider>
   );

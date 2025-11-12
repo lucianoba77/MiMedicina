@@ -4,6 +4,7 @@ import { AuthProvider, useAuth } from './context/AuthContext';
 import { MedProvider } from './context/MedContext';
 import { mockMedicamentos } from './data/mockData';
 
+import LandingScreen from './screens/LandingScreen';
 import LoginScreen from './screens/LoginScreen';
 import DashboardScreen from './screens/DashboardScreen';
 import NuevaMedicinaScreen from './screens/NuevaMedicinaScreen';
@@ -12,65 +13,66 @@ import HistorialScreen from './screens/HistorialScreen';
 import AjustesScreen from './screens/AjustesScreen';
 
 // Componente para proteger rutas
-const ProtectedRoute = ({ children }) => {
-  const { currentUser } = useAuth();
-  return currentUser ? children : <Navigate to="/login" replace />;
+const RutaProtegida = ({ children }) => {
+  const { usuarioActual } = useAuth();
+  return usuarioActual ? children : <Navigate to="/login" replace />;
 };
 
 function App() {
   return (
     <AuthProvider>
       <BrowserRouter>
-        <MedProvider initialMedicines={mockMedicamentos}>
+        <MedProvider medicamentosIniciales={mockMedicamentos}>
           <Routes>
+            <Route path="/" element={<LandingScreen />} />
             <Route path="/login" element={<LoginScreen />} />
             
             <Route 
-              path="/" 
+              path="/dashboard" 
               element={
-                <ProtectedRoute>
+                <RutaProtegida>
                   <DashboardScreen />
-                </ProtectedRoute>
+                </RutaProtegida>
               } 
             />
             
             <Route 
               path="/nuevo" 
               element={
-                <ProtectedRoute>
+                <RutaProtegida>
                   <NuevaMedicinaScreen />
-                </ProtectedRoute>
+                </RutaProtegida>
               } 
             />
             
             <Route 
               path="/botiquin" 
               element={
-                <ProtectedRoute>
+                <RutaProtegida>
                   <BotiquinScreen />
-                </ProtectedRoute>
+                </RutaProtegida>
               } 
             />
             
             <Route 
               path="/historial" 
               element={
-                <ProtectedRoute>
+                <RutaProtegida>
                   <HistorialScreen />
-                </ProtectedRoute>
+                </RutaProtegida>
               } 
             />
             
             <Route 
               path="/ajustes" 
               element={
-                <ProtectedRoute>
+                <RutaProtegida>
                   <AjustesScreen />
-                </ProtectedRoute>
+                </RutaProtegida>
               } 
             />
             
-            <Route path="*" element={<Navigate to="/" replace />} />
+            <Route path="*" element={<Navigate to="/dashboard" replace />} />
           </Routes>
         </MedProvider>
       </BrowserRouter>

@@ -1,60 +1,69 @@
 import React, { createContext, useState, useContext } from 'react';
+import { puedeAgregarMedicamento } from '../utils/subscription';
 
 const MedContext = createContext();
 
-export const MedProvider = ({ children, initialMedicines }) => {
-  const [medicines, setMedicines] = useState(initialMedicines);
+export const MedProvider = ({ children, medicamentosIniciales }) => {
+  const [medicamentos, setMedicamentos] = useState(medicamentosIniciales);
 
-  const agregarMedicina = (medicina) => {
-    const newId = `${Date.now()}`;
+  const agregarMedicina = (medicina, tipoSuscripcion = 'gratis') => {
+    // Verificar límite de medicamentos
+    if (!puedeAgregarMedicamento(medicamentos.length, tipoSuscripcion)) {
+      return {
+        success: false,
+        error: 'Límite de medicamentos alcanzado. Suscríbete a Premium para agregar más.'
+      };
+    }
+
+    const nuevoId = `${Date.now()}`;
     const nuevaMedicina = {
       ...medicina,
-      id: newId,
+      id: nuevoId,
       stockActual: medicina.stockInicial,
       tomasRealizadas: []
     };
-    setMedicines([...medicines, nuevaMedicina]);
-    return nuevaMedicina;
+    setMedicamentos([...medicamentos, nuevaMedicina]);
+    return { success: true, medicina: nuevaMedicina };
   };
 
   const editarMedicina = (id, datosActualizados) => {
-    setMedicines(medicines.map(med => 
-      med.id === id ? { ...med, ...datosActualizados } : med
+    setMedicamentos(medicamentos.map(medicamento => 
+      medicamento.id === id ? { ...medicamento, ...datosActualizados } : medicamento
     ));
   };
 
   const eliminarMedicina = (id) => {
-    setMedicines(medicines.filter(med => med.id !== id));
+    setMedicamentos(medicamentos.filter(medicamento => medicamento.id !== id));
   };
 
   const suspenderMedicina = (id) => {
-    setMedicines(medicines.map(med => 
-      med.id === id ? { ...med, activo: false } : med
+    setMedicamentos(medicamentos.map(medicamento => 
+      medicamento.id === id ? { ...medicamento, activo: false } : medicamento
     ));
   };
 
   const marcarToma = (id, hora) => {
     const fecha = new Date().toISOString().split('T')[0];
-    setMedicines(medicines.map(med => {
-      if (med.id === id) {
+    setMedicamentos(medicamentos.map(medicamento => {
+      if (medicamento.id === id) {
         const nuevaToma = {
           fecha,
           hora,
           tomada: true
         };
         return {
-          ...med,
-          stockActual: med.stockActual > 0 ? med.stockActual - 1 : 0,
-          tomasRealizadas: [...med.tomasRealizadas, nuevaToma]
+          ...medicamento,
+          stockActual: medicamento.stockActual > 0 ? medicamento.stockActual - 1 : 0,
+          tomasRealizadas: [...medicamento.tomasRealizadas, nuevaToma]
         };
       }
-      return med;
+      return medicamento;
     }));
   };
 
   return (
     <MedContext.Provider value={{
-      medicines,
+      medicamentos,
       agregarMedicina,
       editarMedicina,
       eliminarMedicina,

@@ -1,12 +1,15 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useMed } from '../context/MedContext';
+import { useAuth } from '../context/AuthContext';
 import { coloresMedicamento } from '../data/mockData';
+import { esUsuarioPremium, obtenerMensajeLimite } from '../utils/subscription';
 import './NuevaMedicinaScreen.css';
 
 const NuevaMedicinaScreen = () => {
   const navigate = useNavigate();
-  const { agregarMedicina } = useMed();
+  const { agregarMedicina, medicamentos } = useMed();
+  const { usuarioActual } = useAuth();
   
   const [formData, setFormData] = useState({
     nombre: '',
@@ -24,7 +27,11 @@ const NuevaMedicinaScreen = () => {
 
   const [colorSeleccionado, setColorSeleccionado] = useState('#FFFFFF');
 
-  const handleChange = (e) => {
+  /**
+   * Maneja los cambios en los campos del formulario
+   * Actualiza el estado del formulario según el tipo de campo (text, checkbox, select, etc.)
+   */
+  const cambioCampoFormulario = (e) => {
     const { name, value, type, checked } = e.target;
     setFormData(prev => ({
       ...prev,
@@ -32,7 +39,11 @@ const NuevaMedicinaScreen = () => {
     }));
   };
 
-  const handleColorSelect = (color) => {
+  /**
+   * Maneja la selección de color para el medicamento
+   * Actualiza tanto el estado local del color seleccionado como el estado del formulario
+   */
+  const seleccionColor = (color) => {
     setColorSeleccionado(color.valor);
     setFormData(prev => ({ ...prev, color: color.valor }));
   };
@@ -40,11 +51,20 @@ const NuevaMedicinaScreen = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     
-    const nuevaMedicina = agregarMedicina(formData);
-    if (nuevaMedicina) {
+    const tipoSuscripcion = esUsuarioPremium(usuarioActual) ? 'premium' : 'gratis';
+    const resultado = agregarMedicina(formData, tipoSuscripcion);
+    
+    if (resultado.success) {
       navigate('/botiquin');
+    } else {
+      alert(resultado.error || 'Error al agregar medicamento');
     }
   };
+
+  // Verificar si puede agregar más medicamentos
+  const esPremium = esUsuarioPremium(usuarioActual);
+  const puedeAgregar = esPremium || medicamentos.length < 5;
+  const mensajeLimite = !esPremium ? obtenerMensajeLimite(medicamentos.length) : '';
 
   const presentaciones = ['comprimidos', 'inyeccion', 'jarabe', 'gotas', 'crema', 'supositorio'];
 
@@ -56,6 +76,17 @@ const NuevaMedicinaScreen = () => {
       </div>
 
       <div className="nm-container">
+        {!puedeAgregar && (
+          <div className="limit-warning">
+            <p>⚠️ {mensajeLimite}</p>
+            <button 
+              className="btn-premium"
+              onClick={() => navigate('/ajustes')}
+            >
+              Suscribirse a Premium
+            </button>
+          </div>
+        )}
         <form onSubmit={handleSubmit} className="nm-form">
           <div className="form-group">
             <label htmlFor="nombre">Nombre del medicamento *</label>
@@ -64,7 +95,7 @@ const NuevaMedicinaScreen = () => {
               id="nombre"
               name="nombre"
               value={formData.nombre}
-              onChange={handleChange}
+              onChange={cambioCampoFormulario}
               placeholder="Ej: Paracetamol"
               required
             />
@@ -76,10 +107,10 @@ const NuevaMedicinaScreen = () => {
               id="presentacion"
               name="presentacion"
               value={formData.presentacion}
-              onChange={handleChange}
+              onChange={cambioCampoFormulario}
             >
-              {presentaciones.map(p => (
-                <option key={p} value={p}>{p}</option>
+              {presentaciones.map(presentacion => (
+                <option key={presentacion} value={presentacion}>{presentacion}</option>
               ))}
             </select>
           </div>
@@ -92,7 +123,7 @@ const NuevaMedicinaScreen = () => {
                 id="tomasDiarias"
                 name="tomasDiarias"
                 value={formData.tomasDiarias}
-                onChange={handleChange}
+                onChange={cambioCampoFormulario}
                 min="1"
                 max="6"
                 required
@@ -106,7 +137,7 @@ const NuevaMedicinaScreen = () => {
                 id="primeraToma"
                 name="primeraToma"
                 value={formData.primeraToma}
-                onChange={handleChange}
+                onChange={cambioCampoFormulario}
                 required
               />
             </div>
@@ -119,7 +150,7 @@ const NuevaMedicinaScreen = () => {
               id="afeccion"
               name="afeccion"
               value={formData.afeccion}
-              onChange={handleChange}
+              onChange={cambioCampoFormulario}
               placeholder="Ej: Dolor de cabeza, Hipertensión"
             />
           </div>
@@ -132,7 +163,7 @@ const NuevaMedicinaScreen = () => {
                 id="stockInicial"
                 name="stockInicial"
                 value={formData.stockInicial}
-                onChange={handleChange}
+                onChange={cambioCampoFormulario}
                 min="1"
                 required
               />
@@ -145,7 +176,7 @@ const NuevaMedicinaScreen = () => {
                 id="diasTratamiento"
                 name="diasTratamiento"
                 value={formData.diasTratamiento}
-                onChange={handleChange}
+                onChange={cambioCampoFormulario}
                 min="1"
                 required
               />
@@ -170,7 +201,7 @@ const NuevaMedicinaScreen = () => {
                   key={index}
                   className={`color-swatch ${colorSeleccionado === color.valor ? 'selected' : ''}`}
                   style={{ backgroundColor: color.valor }}
-                  onClick={() => handleColorSelect(color)}
+                  onClick={() => seleccionColor(color)}
                 >
                   {colorSeleccionado === color.valor && <span className="checkmark">✓</span>}
                 </div>
@@ -186,7 +217,7 @@ const NuevaMedicinaScreen = () => {
                 id="alarmasActivas"
                 name="alarmasActivas"
                 checked={formData.alarmasActivas}
-                onChange={handleChange}
+                onChange={cambioCampoFormulario}
                 className="checkbox-toggle"
               />
             </div>
@@ -198,7 +229,7 @@ const NuevaMedicinaScreen = () => {
               id="detalles"
               name="detalles"
               value={formData.detalles}
-              onChange={handleChange}
+              onChange={cambioCampoFormulario}
               rows="4"
               placeholder="Instrucciones especiales, efectos secundarios a vigilar, etc."
             />
