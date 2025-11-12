@@ -7,23 +7,15 @@ import { getAuth } from 'firebase/auth';
 import { getFirestore } from 'firebase/firestore';
 
 // Configuración de Firebase
-// Si usas variables de entorno, descomenta las líneas de process.env y comenta las hardcodeadas
+// Usa variables de entorno si están disponibles, sino usa valores directos
 const firebaseConfig = {
-  // Opción 1: Usar variables de entorno (RECOMENDADO para producción)
-  // apiKey: process.env.REACT_APP_FIREBASE_API_KEY,
-  // authDomain: process.env.REACT_APP_FIREBASE_AUTH_DOMAIN,
-  // projectId: process.env.REACT_APP_FIREBASE_PROJECT_ID,
-  // storageBucket: process.env.REACT_APP_FIREBASE_STORAGE_BUCKET,
-  // messagingSenderId: process.env.REACT_APP_FIREBASE_MESSAGING_SENDER_ID,
-  // appId: process.env.REACT_APP_FIREBASE_APP_ID,
-
-  // Opción 2: Credenciales directas (para desarrollo)
-  apiKey: "TU_API_KEY_AQUI",
-  authDomain: "mimedicina-ebec7.firebaseapp.com",
-  projectId: "mimedicina-ebec7",
-  storageBucket: "mimedicina-ebec7.appspot.com",
-  messagingSenderId: "TU_MESSAGING_SENDER_ID",
-  appId: "TU_APP_ID"
+  apiKey: process.env.REACT_APP_FIREBASE_API_KEY || "AIzaSyA6Zubxqx5QGYfGVd5SZOJ_JWOKbcN75YU",
+  authDomain: process.env.REACT_APP_FIREBASE_AUTH_DOMAIN || "mimedicina-ebec7.firebaseapp.com",
+  projectId: process.env.REACT_APP_FIREBASE_PROJECT_ID || "mimedicina-ebec7",
+  storageBucket: process.env.REACT_APP_FIREBASE_STORAGE_BUCKET || "mimedicina-ebec7.firebasestorage.app",
+  messagingSenderId: process.env.REACT_APP_FIREBASE_MESSAGING_SENDER_ID || "61209788331",
+  appId: process.env.REACT_APP_FIREBASE_APP_ID || "1:61209788331:web:fda8aa3439a78523179cee",
+  measurementId: process.env.REACT_APP_FIREBASE_MEASUREMENT_ID || "G-CSW8HKD7HL" // Opcional: Solo para Analytics
 };
 
 // Inicializar Firebase

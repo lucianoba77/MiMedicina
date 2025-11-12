@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { mockUsers } from '../data/mockData';
 import './LoginScreen.css';
 
 const LoginScreen = () => {
@@ -9,22 +8,42 @@ const LoginScreen = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [nombre, setNombre] = useState('');
-  const { login } = useAuth();
+  const [error, setError] = useState('');
+  const [cargando, setCargando] = useState(false);
+  const { login, registro } = useAuth();
   const navigate = useNavigate();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    
-    if (isLogin) {
-      const resultado = login(email, password, mockUsers);
-      if (resultado.success) {
-        navigate('/dashboard');
+    setError('');
+    setCargando(true);
+
+    try {
+      if (isLogin) {
+        const resultado = await login(email, password);
+        if (resultado.success) {
+          navigate('/dashboard');
+        } else {
+          setError(resultado.error || 'Credenciales inválidas');
+        }
       } else {
-        alert('Credenciales inválidas');
+        if (!nombre.trim()) {
+          setError('El nombre es requerido');
+          setCargando(false);
+          return;
+        }
+        const resultado = await registro(email, password, nombre);
+        if (resultado.success) {
+          navigate('/dashboard');
+        } else {
+          setError(resultado.error || 'Error al registrar usuario');
+        }
       }
-    } else {
-      // Lógica de registro (simplificada)
-      alert('Funcionalidad de registro aún no implementada');
+    } catch (error) {
+      setError('Error inesperado. Intenta nuevamente.');
+      console.error('Error en login/registro:', error);
+    } finally {
+      setCargando(false);
     }
   };
 
@@ -91,8 +110,21 @@ const LoginScreen = () => {
             />
           </div>
 
-          <button type="submit" className="btn-primary">
-            {isLogin ? 'Iniciar Sesión' : 'Registrarse'}
+          {error && (
+            <div className="error-message">
+              {error}
+            </div>
+          )}
+
+          <button 
+            type="submit" 
+            className="btn-primary"
+            disabled={cargando}
+          >
+            {cargando 
+              ? (isLogin ? 'Iniciando sesión...' : 'Registrando...') 
+              : (isLogin ? 'Iniciar Sesión' : 'Registrarse')
+            }
           </button>
         </form>
       </div>

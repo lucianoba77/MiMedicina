@@ -73,13 +73,19 @@ const BotiquinScreen = () => {
                 <div className="med-actions">
                   <button 
                     className="btn-suspender"
-                    onClick={() => suspenderMedicina(medicamento.id)}
+                    onClick={async () => {
+                      await suspenderMedicina(medicamento.id);
+                    }}
                   >
                     Suspender
                   </button>
                   <button 
                     className="btn-eliminar"
-                    onClick={() => eliminarMedicina(medicamento.id)}
+                    onClick={async () => {
+                      if (window.confirm('¿Estás seguro de eliminar este medicamento?')) {
+                        await eliminarMedicina(medicamento.id);
+                      }
+                    }}
                   >
                     🗑️
                   </button>

@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import MainMenu from '../components/MainMenu';
+import GoogleCalendarSync from '../components/GoogleCalendarSync';
 import './AjustesScreen.css';
 
 const AjustesScreen = () => {
@@ -32,6 +33,14 @@ const AjustesScreen = () => {
       </div>
 
       <div className="ajustes-content">
+        <div className="settings-section">
+          <div className="section-header">
+            <div className="section-icon">📅</div>
+            <h2 className="section-title">Sincronización con Google Calendar</h2>
+          </div>
+          <GoogleCalendarSync />
+        </div>
+
         <div className="settings-section">
           <div className="section-header">
             <div className="section-icon">👤</div>

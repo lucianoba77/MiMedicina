@@ -45,8 +45,8 @@ const MedicamentoCard = ({ medicamento, tipoVista = 'dashboard' }) => {
    * Maneja el evento de marcar una toma como realizada
    * Registra la toma en el historial y actualiza el stock del medicamento
    */
-  const marcarToma = () => {
-    marcarTomaContext(medicamento.id, medicamento.primeraToma);
+  const marcarToma = async () => {
+    await marcarTomaContext(medicamento.id, medicamento.primeraToma);
   };
 
   // Obtener ícono según presentación
@@ -106,7 +106,7 @@ const MedicamentoCard = ({ medicamento, tipoVista = 'dashboard' }) => {
             <>
               <button 
                 className="btn-marcar"
-                onClick={manejarMarcarTomaRealizada}
+                onClick={marcarToma}
                 style={{ backgroundColor: medicamento.color }}
               >
                 ✓ Marcar como tomado

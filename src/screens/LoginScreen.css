@@ -115,6 +115,22 @@
   box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
 }
 
+.btn-primary:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.error-message {
+  background-color: #f8d7da;
+  color: #721c24;
+  padding: 12px;
+  border-radius: 8px;
+  margin-bottom: 16px;
+  font-size: 14px;
+  border: 1px solid #f5c6cb;
+}
+
 @media (max-width: 480px) {
   .login-container {
     padding: 32px 24px;

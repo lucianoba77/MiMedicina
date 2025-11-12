@@ -4,7 +4,9 @@
   "description": "Botiquín virtual para gestión de medicamentos",
   "private": true,
   "dependencies": {
+    "@react-oauth/google": "^0.12.2",
     "firebase": "^12.5.0",
+    "googleapis": "^166.0.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-router-dom": "^6.20.0",

@@ -48,11 +48,11 @@ const NuevaMedicinaScreen = () => {
     setFormData(prev => ({ ...prev, color: color.valor }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     
     const tipoSuscripcion = esUsuarioPremium(usuarioActual) ? 'premium' : 'gratis';
-    const resultado = agregarMedicina(formData, tipoSuscripcion);
+    const resultado = await agregarMedicina(formData, tipoSuscripcion);
     
     if (resultado.success) {
       navigate('/botiquin');
