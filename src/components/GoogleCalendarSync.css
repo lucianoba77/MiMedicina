@@ -1,9 +1,9 @@
 .calendar-sync-container {
-  background: white;
-  border-radius: 16px;
-  padding: 24px;
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
-  margin-bottom: 24px;
+  background: var(--bg-primary);
+  border-radius: var(--border-radius-lg);
+  padding: var(--spacing-lg);
+  box-shadow: var(--shadow-sm);
+  margin-bottom: var(--spacing-lg);
 }
 
 .calendar-sync-header {
@@ -110,11 +110,27 @@
 
 @media (max-width: 480px) {
   .calendar-sync-container {
-    padding: 20px;
+    padding: var(--spacing-md);
+    border-radius: var(--border-radius-md);
+  }
+
+  .calendar-sync-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--spacing-sm);
   }
 
   .calendar-icon {
-    font-size: 40px;
+    font-size: 36px;
+  }
+
+  .calendar-sync-header h3 {
+    font-size: 18px;
+  }
+
+  .btn-disconnect {
+    width: 100%;
+    padding: 14px;
   }
 }
 

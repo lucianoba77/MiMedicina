@@ -3,8 +3,10 @@ import {
   iniciarSesion as iniciarSesionFirebase,
   registrarUsuario as registrarUsuarioFirebase,
   cerrarSesion as cerrarSesionFirebase,
-  observarEstadoAuth
+  observarEstadoAuth,
+  iniciarSesionConGoogle as iniciarSesionConGoogleFirebase
 } from '../services/authService';
+import { esAsistenteDe } from '../services/asistentesService';
 
 const AuthContext = createContext();
 
@@ -36,6 +38,34 @@ export const AuthProvider = ({ children }) => {
     return resultado;
   };
 
+  const loginWithGoogle = async () => {
+    setCargando(true);
+    try {
+      const resultado = await iniciarSesionConGoogleFirebase();
+      
+      if (resultado.success) {
+        // Verificar si el usuario es asistente
+        const asistenteResult = await esAsistenteDe(resultado.usuario.email);
+        
+        if (asistenteResult.success && asistenteResult.esAsistente) {
+          // Si es asistente, actualizar el usuario con el rol y el pacienteId
+          resultado.usuario.role = 'asistente';
+          resultado.usuario.pacienteId = asistenteResult.pacienteId;
+          resultado.usuario.paciente = asistenteResult.paciente;
+        }
+      }
+      
+      setCargando(false);
+      return resultado;
+    } catch (error) {
+      setCargando(false);
+      return {
+        success: false,
+        error: error.message || 'Error al iniciar sesión con Google'
+      };
+    }
+  };
+
   const logout = async () => {
     setCargando(true);
     await cerrarSesionFirebase();
@@ -43,11 +73,40 @@ export const AuthProvider = ({ children }) => {
     setCargando(false);
   };
 
+  // Verificar si el usuario es asistente al cargar
+  useEffect(() => {
+    const verificarRolAsistente = async () => {
+      if (usuarioActual && usuarioActual.email && !usuarioActual.role) {
+        const asistenteResult = await esAsistenteDe(usuarioActual.email);
+        
+        if (asistenteResult.success && asistenteResult.esAsistente) {
+          setUsuarioActual(prev => ({
+            ...prev,
+            role: 'asistente',
+            pacienteId: asistenteResult.pacienteId,
+            paciente: asistenteResult.paciente
+          }));
+        } else if (!usuarioActual.role) {
+          // Si no es asistente y no tiene role, es paciente
+          setUsuarioActual(prev => ({
+            ...prev,
+            role: 'paciente'
+          }));
+        }
+      }
+    };
+
+    if (usuarioActual) {
+      verificarRolAsistente();
+    }
+  }, [usuarioActual]);
+
   return (
     <AuthContext.Provider value={{ 
       usuarioActual, 
       login, 
       registro,
+      loginWithGoogle,
       logout, 
       cargando 
     }}>

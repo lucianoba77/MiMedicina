@@ -1,12 +1,14 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useMed } from '../context/MedContext';
+import { useNotification } from '../context/NotificationContext';
 import MainMenu from '../components/MainMenu';
 import './BotiquinScreen.css';
 
 const BotiquinScreen = () => {
   const navigate = useNavigate();
   const { medicamentos, eliminarMedicina, suspenderMedicina } = useMed();
+  const { showConfirm, showSuccess, showError } = useNotification();
 
   return (
     <div className="botiquin-screen">
@@ -74,7 +76,12 @@ const BotiquinScreen = () => {
                   <button 
                     className="btn-suspender"
                     onClick={async () => {
-                      await suspenderMedicina(medicamento.id);
+                      const resultado = await suspenderMedicina(medicamento.id);
+                      if (resultado.success) {
+                        showSuccess(`${medicamento.nombre} ha sido suspendido`);
+                      } else {
+                        showError(resultado.error || 'Error al suspender medicamento');
+                      }
                     }}
                   >
                     Suspender
@@ -82,8 +89,21 @@ const BotiquinScreen = () => {
                   <button 
                     className="btn-eliminar"
                     onClick={async () => {
-                      if (window.confirm('¿Estás seguro de eliminar este medicamento?')) {
-                        await eliminarMedicina(medicamento.id);
+                      const confirmado = await showConfirm({
+                        title: 'Eliminar medicamento',
+                        message: `¿Estás seguro de que deseas eliminar "${medicamento.nombre}"? Esta acción no se puede deshacer.`,
+                        confirmText: 'Eliminar',
+                        cancelText: 'Cancelar',
+                        type: 'danger'
+                      });
+
+                      if (confirmado) {
+                        const resultado = await eliminarMedicina(medicamento.id);
+                        if (resultado.success) {
+                          showSuccess(`${medicamento.nombre} ha sido eliminado`);
+                        } else {
+                          showError(resultado.error || 'Error al eliminar medicamento');
+                        }
                       }
                     }}
                   >

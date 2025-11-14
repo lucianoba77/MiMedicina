@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { useNotification } from '../context/NotificationContext';
 import { guardarTokenGoogle } from '../services/calendarService';
 import { obtenerTokenDeURL } from '../utils/googleAuthHelper';
 
@@ -11,6 +12,7 @@ import { obtenerTokenDeURL } from '../utils/googleAuthHelper';
 const GoogleCalendarCallback = () => {
   const { usuarioActual } = useAuth();
   const navigate = useNavigate();
+  const { showSuccess, showError } = useNotification();
 
   useEffect(() => {
     const procesarCallback = async () => {
@@ -19,13 +21,13 @@ const GoogleCalendarCallback = () => {
         const tokenData = obtenerTokenDeURL();
         
         if (!tokenData) {
-          alert('Error: No se pudo obtener el token de Google. Intenta nuevamente.');
+          showError('No se pudo obtener el token de Google. Intenta nuevamente.');
           navigate('/ajustes');
           return;
         }
 
         if (!usuarioActual) {
-          alert('Error: Debes estar autenticado. Redirigiendo al login...');
+          showError('Debes estar autenticado. Redirigiendo al login...');
           navigate('/login');
           return;
         }
@@ -33,19 +35,17 @@ const GoogleCalendarCallback = () => {
         const resultado = await guardarTokenGoogle(usuarioActual.id, tokenData);
         
         if (resultado.success) {
-          // Limpiar la URL antes de redirigir
           window.history.replaceState({}, document.title, '/ajustes');
           navigate('/ajustes', { replace: true });
-          // Mostrar mensaje de éxito después de un pequeño delay para que la navegación se complete
           setTimeout(() => {
-            alert('✅ Google Calendar conectado exitosamente');
+            showSuccess('Google Calendar conectado exitosamente');
           }, 500);
         } else {
           throw new Error(resultado.error || 'Error al guardar token');
         }
       } catch (error) {
         console.error('Error en callback OAuth:', error);
-        alert('Error al conectar Google Calendar: ' + error.message);
+        showError('Error al conectar Google Calendar: ' + error.message);
         navigate('/ajustes');
       }
     };

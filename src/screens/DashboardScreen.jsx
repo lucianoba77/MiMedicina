@@ -1,6 +1,7 @@
 import React from 'react';
 import { useMed } from '../context/MedContext';
 import { useAuth } from '../context/AuthContext';
+import { useStockAlerts } from '../hooks/useStockAlerts';
 import MedicamentoCard from '../components/MedicamentoCard';
 import MainMenu from '../components/MainMenu';
 import './DashboardScreen.css';
@@ -8,6 +9,9 @@ import './DashboardScreen.css';
 const DashboardScreen = () => {
   const { medicamentos } = useMed();
   const { usuarioActual } = useAuth();
+  
+  // Monitorear stock y mostrar alertas
+  useStockAlerts(7); // Alertar cuando queden 7 días o menos
 
   // Filtrar medicamentos del día de hoy
   const medicamentosHoy = medicamentos.filter(medicamento => {

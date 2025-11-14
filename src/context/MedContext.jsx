@@ -22,8 +22,13 @@ export const MedProvider = ({ children }) => {
     if (usuarioActual) {
       cargarMedicamentos();
       
+      // Determinar el userId: si es asistente, usar pacienteId; si no, usar su propio id
+      const userId = usuarioActual.role === 'asistente' 
+        ? usuarioActual.pacienteId 
+        : usuarioActual.id;
+      
       // Suscribirse a cambios en tiempo real
-      const unsubscribe = suscribirMedicamentos(usuarioActual.id, (medicamentosActualizados) => {
+      const unsubscribe = suscribirMedicamentos(userId, (medicamentosActualizados) => {
         setMedicamentos(medicamentosActualizados);
       });
 
@@ -36,8 +41,13 @@ export const MedProvider = ({ children }) => {
   const cargarMedicamentos = async () => {
     if (!usuarioActual) return;
 
+    // Si es asistente, cargar medicamentos del paciente; si no, los suyos
+    const userId = usuarioActual.role === 'asistente' 
+      ? usuarioActual.pacienteId 
+      : usuarioActual.id;
+
     setCargando(true);
-    const resultado = await obtenerMedicamentos(usuarioActual.id);
+    const resultado = await obtenerMedicamentos(userId);
     if (resultado.success) {
       setMedicamentos(resultado.medicamentos);
     }

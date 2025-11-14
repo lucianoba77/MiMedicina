@@ -1,15 +1,20 @@
 .historial-screen {
   min-height: 100vh;
-  background-color: #f5f7fa;
-  padding-bottom: 120px;
+  min-height: 100dvh;
+  background: linear-gradient(135deg, #f5f7fa 0%, #e8f4f8 100%);
+  padding-bottom: calc(100px + env(safe-area-inset-bottom));
 }
 
 .historial-header {
   background: linear-gradient(135deg, #9C27B0 0%, #7B1FA2 100%);
-  padding: 20px;
+  padding: max(20px, env(safe-area-inset-top) + 12px) var(--spacing-md) var(--spacing-md);
   display: flex;
   align-items: center;
-  gap: 16px;
+  gap: var(--spacing-md);
+  box-shadow: var(--shadow-md);
+  position: sticky;
+  top: 0;
+  z-index: 100;
 }
 
 .btn-home {
@@ -35,7 +40,9 @@
 }
 
 .historial-content {
-  padding: 24px 20px;
+  padding: var(--spacing-lg) var(--spacing-md);
+  max-width: 900px;
+  margin: 0 auto;
 }
 
 .stats-cards {
@@ -108,24 +115,110 @@
   gap: 16px;
 }
 
+/* Tarjeta de adherencia promedio */
+.adherencia-promedio-card {
+  background: white;
+  border-radius: 16px;
+  padding: 24px;
+  margin-bottom: 24px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  border-left: 6px solid #4CAF50;
+}
+
+.adherencia-promedio-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.adherencia-icon {
+  font-size: 48px;
+  flex-shrink: 0;
+}
+
+.adherencia-promedio-header h2 {
+  margin: 0 0 4px 0;
+  font-size: 20px;
+  font-weight: 700;
+  color: #333;
+}
+
+.adherencia-mensaje {
+  margin: 0;
+  font-size: 14px;
+  color: #666;
+}
+
+.adherencia-porcentaje-grande {
+  font-size: 48px;
+  font-weight: 700;
+  text-align: center;
+  margin-bottom: 16px;
+}
+
+.adherencia-bar-large {
+  width: 100%;
+  height: 16px;
+  background-color: #E0E0E0;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.adherencia-bar-fill {
+  height: 100%;
+  border-radius: 8px;
+  transition: width 0.5s ease;
+}
+
 .adherencia-item {
   display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 16px;
+  background: #f9f9f9;
+  border-radius: 8px;
+}
+
+.adherencia-item-header {
+  display: flex;
+  justify-content: space-between;
   align-items: center;
   gap: 12px;
 }
 
 .adherencia-nombre {
   flex: 1;
-  font-size: 14px;
+  font-size: 16px;
   color: #333;
-  font-weight: 500;
+  font-weight: 600;
 }
 
 .adherencia-porcentaje {
-  font-size: 14px;
+  font-size: 18px;
   font-weight: 700;
-  color: #333;
-  min-width: 40px;
+  min-width: 50px;
+  text-align: right;
+}
+
+.adherencia-stats {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  font-size: 12px;
+  color: #666;
+}
+
+.adherencia-stats .stat-label {
+  font-size: 12px;
+  color: #666;
+}
+
+.empty-message {
+  text-align: center;
+  color: #666;
+  padding: 40px 20px;
+  font-size: 14px;
 }
 
 .adherencia-bar-container {
@@ -190,10 +283,33 @@
   background-color: #F44336;
 }
 
+.day-dot.parcial .dot-inner {
+  background-color: #FF9800;
+}
+
+.day-tomas {
+  font-size: 11px;
+  color: #666;
+  font-weight: 500;
+}
+
+.medicamento-semana {
+  margin-bottom: 16px;
+}
+
+.medicamento-semana-nombre {
+  margin: 0 0 16px 0;
+  font-size: 16px;
+  font-weight: 600;
+  color: #333;
+  text-align: center;
+}
+
 .legend {
   display: flex;
   gap: 24px;
   justify-content: center;
+  flex-wrap: wrap;
 }
 
 .legend-item {
@@ -218,13 +334,30 @@
   background-color: #F44336;
 }
 
+.legend-dot.parcial {
+  background-color: #FF9800;
+}
+
 @media (max-width: 480px) {
+  .historial-header {
+    padding: max(16px, env(safe-area-inset-top) + 8px) var(--spacing-md) var(--spacing-md);
+  }
+
+  .historial-header h1 {
+    font-size: 20px;
+  }
+
+  .historial-content {
+    padding: var(--spacing-md);
+  }
+
   .stats-cards {
-    gap: 8px;
+    gap: var(--spacing-sm);
+    grid-template-columns: 1fr;
   }
 
   .stat-card {
-    padding: 16px;
+    padding: var(--spacing-md);
   }
 
   .stat-number {
@@ -232,7 +365,35 @@
   }
 
   .section-card {
-    padding: 16px;
+    padding: var(--spacing-md);
+    border-radius: var(--border-radius-md);
+  }
+
+  .adherencia-promedio-card {
+    padding: var(--spacing-md);
+    border-radius: var(--border-radius-md);
+  }
+
+  .adherencia-porcentaje-grande {
+    font-size: 36px;
+  }
+
+  .adherencia-icon {
+    font-size: 36px;
+  }
+}
+
+@media (max-width: 360px) {
+  .stats-cards {
+    gap: var(--spacing-xs);
+  }
+
+  .stat-card {
+    padding: var(--spacing-sm);
+  }
+
+  .adherencia-porcentaje-grande {
+    font-size: 32px;
   }
 }
 

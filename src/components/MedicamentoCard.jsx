@@ -1,9 +1,11 @@
 import React from 'react';
 import { useMed } from '../context/MedContext';
+import { useNotification } from '../context/NotificationContext';
 import './MedicamentoCard.css';
 
 const MedicamentoCard = ({ medicamento, tipoVista = 'dashboard' }) => {
   const { marcarToma: marcarTomaContext } = useMed();
+  const { showSuccess, showError } = useNotification();
 
   // Calcular porcentaje de stock
   const porcentajeStock = (medicamento.stockActual / medicamento.stockInicial) * 100;
@@ -46,7 +48,12 @@ const MedicamentoCard = ({ medicamento, tipoVista = 'dashboard' }) => {
    * Registra la toma en el historial y actualiza el stock del medicamento
    */
   const marcarToma = async () => {
-    await marcarTomaContext(medicamento.id, medicamento.primeraToma);
+    const resultado = await marcarTomaContext(medicamento.id, medicamento.primeraToma);
+    if (resultado.success) {
+      showSuccess(`✅ ${medicamento.nombre} marcado como tomado`);
+    } else {
+      showError(resultado.error || 'Error al marcar la toma');
+    }
   };
 
   // Obtener ícono según presentación

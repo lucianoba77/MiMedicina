@@ -1,6 +1,4 @@
 // Configuración de Firebase para MiMedicina
-// ⚠️ IMPORTANTE: Reemplaza estas credenciales con las de tu proyecto Firebase
-// Las encontrarás en: Firebase Console > Configuración del proyecto > Tus apps > Web app
 
 import { initializeApp } from 'firebase/app';
 import { getAuth } from 'firebase/auth';
@@ -18,7 +16,7 @@ const firebaseConfig = {
   measurementId: process.env.REACT_APP_FIREBASE_MEASUREMENT_ID || "G-CSW8HKD7HL" // Opcional: Solo para Analytics
 };
 
-// Inicializar Firebase
+// Inicializa Firebase
 let app;
 try {
   app = initializeApp(firebaseConfig);
@@ -26,7 +24,7 @@ try {
   console.error('Error al inicializar Firebase:', error);
 }
 
-// Inicializar servicios de Firebase
+// Inicializa servicios de Firebase
 export const auth = app ? getAuth(app) : null;
 export const db = app ? getFirestore(app) : null;
 

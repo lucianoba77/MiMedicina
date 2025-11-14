@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useMed } from '../context/MedContext';
 import { useAuth } from '../context/AuthContext';
+import { useNotification } from '../context/NotificationContext';
 import { coloresMedicamento } from '../constants/colores';
 import { esUsuarioPremium, obtenerMensajeLimite } from '../utils/subscription';
 import './NuevaMedicinaScreen.css';
@@ -10,6 +11,7 @@ const NuevaMedicinaScreen = () => {
   const navigate = useNavigate();
   const { agregarMedicina, medicamentos } = useMed();
   const { usuarioActual } = useAuth();
+  const { showSuccess, showError } = useNotification();
   
   const [formData, setFormData] = useState({
     nombre: '',
@@ -55,9 +57,10 @@ const NuevaMedicinaScreen = () => {
     const resultado = await agregarMedicina(formData, tipoSuscripcion);
     
     if (resultado.success) {
+      showSuccess(`${formData.nombre} ha sido agregado correctamente`);
       navigate('/botiquin');
     } else {
-      alert(resultado.error || 'Error al agregar medicamento');
+      showError(resultado.error || 'Error al agregar medicamento');
     }
   };
 

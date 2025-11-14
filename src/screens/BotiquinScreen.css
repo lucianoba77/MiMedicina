@@ -1,15 +1,20 @@
 .botiquin-screen {
   min-height: 100vh;
-  background-color: #f5f7fa;
-  padding-bottom: 120px;
+  min-height: 100dvh;
+  background: linear-gradient(135deg, #f5f7fa 0%, #e8f4f8 100%);
+  padding-bottom: calc(100px + env(safe-area-inset-bottom));
 }
 
 .botiquin-header {
-  background: linear-gradient(135deg, #4CAF50 0%, #388E3C 100%);
-  padding: 20px;
+  background: linear-gradient(135deg, var(--success-color) 0%, #388E3C 100%);
+  padding: max(20px, env(safe-area-inset-top) + 12px) var(--spacing-md) var(--spacing-md);
   display: flex;
   align-items: center;
-  gap: 16px;
+  gap: var(--spacing-md);
+  box-shadow: var(--shadow-md);
+  position: sticky;
+  top: 0;
+  z-index: 100;
 }
 
 .btn-home {
@@ -35,20 +40,54 @@
 }
 
 .botiquin-content {
-  padding: 24px 20px;
+  padding: var(--spacing-lg) var(--spacing-md);
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.empty-state {
+  text-align: center;
+  padding: var(--spacing-2xl) var(--spacing-lg);
+  background: var(--bg-primary);
+  border-radius: var(--border-radius-lg);
+  box-shadow: var(--shadow-sm);
+  margin-top: var(--spacing-lg);
+}
+
+.empty-state p {
+  margin: var(--spacing-sm) 0;
+  font-size: 16px;
+  color: var(--text-secondary);
+}
+
+.empty-state p:first-child {
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.empty-hint {
+  font-size: 14px;
+  color: var(--text-light);
+  margin-top: var(--spacing-sm);
 }
 
 .medicamentos-grid {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: var(--spacing-md);
 }
 
 .medicamento-card-container {
-  background: white;
-  border-radius: 16px;
-  padding: 20px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  background: var(--bg-primary);
+  border-radius: var(--border-radius-lg);
+  padding: var(--spacing-lg);
+  box-shadow: var(--shadow-md);
+  transition: all var(--transition-base);
+}
+
+.medicamento-card-container:active {
+  transform: scale(0.98);
 }
 
 .med-card-header {
@@ -66,6 +105,8 @@
   align-items: center;
   justify-content: center;
   font-size: 28px;
+  flex-shrink: 0;
+  box-shadow: var(--shadow-sm);
 }
 
 .med-title-section {
@@ -196,14 +237,54 @@
 }
 
 @media (max-width: 480px) {
+  .botiquin-header {
+    padding: max(16px, env(safe-area-inset-top) + 8px) var(--spacing-md) var(--spacing-md);
+  }
+
+  .botiquin-header h1 {
+    font-size: 20px;
+  }
+
+  .botiquin-content {
+    padding: var(--spacing-md);
+  }
+
+  .medicamento-card-container {
+    padding: var(--spacing-md);
+    border-radius: var(--border-radius-md);
+  }
+
   .med-nombre {
     font-size: 18px;
   }
 
   .med-icon-circle {
-    width: 52px;
-    height: 52px;
-    font-size: 26px;
+    width: 48px;
+    height: 48px;
+    font-size: 24px;
+  }
+
+  .med-actions {
+    flex-direction: column;
+    gap: var(--spacing-sm);
+  }
+
+  .btn-suspender,
+  .btn-eliminar {
+    width: 100%;
+    height: 44px;
+  }
+}
+
+@media (max-width: 360px) {
+  .med-nombre {
+    font-size: 16px;
+  }
+
+  .med-icon-circle {
+    width: 44px;
+    height: 44px;
+    font-size: 22px;
   }
 }
 

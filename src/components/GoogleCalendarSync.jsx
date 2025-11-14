@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { GoogleLogin, googleLogout } from '@react-oauth/google';
 import { useAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
+import { useNotification } from '../context/NotificationContext';
 import { 
   guardarTokenGoogle, 
   obtenerTokenGoogle, 
@@ -14,6 +15,7 @@ import './GoogleCalendarSync.css';
 const GoogleCalendarSync = () => {
   const { usuarioActual } = useAuth();
   const navigate = useNavigate();
+  const { showError, showWarning, showSuccess } = useNotification();
   const [conectado, setConectado] = useState(false);
   const [cargando, setCargando] = useState(true);
   const GOOGLE_CLIENT_ID = process.env.REACT_APP_GOOGLE_CLIENT_ID || '';
@@ -50,11 +52,11 @@ const GoogleCalendarSync = () => {
       if (GOOGLE_CLIENT_ID) {
         autorizarGoogleCalendar(GOOGLE_CLIENT_ID);
       } else {
-        alert('⚠️ Google Client ID no configurado. Configura REACT_APP_GOOGLE_CLIENT_ID en .env');
+        showWarning('Google Client ID no configurado. Configura REACT_APP_GOOGLE_CLIENT_ID en .env');
       }
     } catch (error) {
       console.error('Error al iniciar autorización:', error);
-      alert('Error al conectar Google Calendar');
+      showError('Error al conectar Google Calendar');
     }
   };
 
@@ -62,22 +64,19 @@ const GoogleCalendarSync = () => {
     if (!usuarioActual) return;
 
     try {
-      // Cerrar sesión de Google OAuth
       googleLogout();
-      
-      // Eliminar token de Firestore
       await eliminarTokenGoogle(usuarioActual.id);
       setConectado(false);
-      alert('Google Calendar desconectado');
+      showSuccess('Google Calendar desconectado correctamente');
     } catch (error) {
       console.error('Error al desconectar:', error);
-      alert('Error al desconectar Google Calendar');
+      showError('Error al desconectar Google Calendar');
     }
   };
 
   const manejarError = (error) => {
     console.error('Error en Google Login:', error);
-    alert('Error al conectar con Google Calendar');
+    showError('Error al conectar con Google Calendar');
   };
 
   if (cargando) {
